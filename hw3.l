@@ -2,21 +2,17 @@
 (defun element-count (item lst)
   (cond
     ((null lst) 0) ; if no item, return 0
-    ((equal item (car lst)) ; if match, increment
-      (+ 1 (element-count item (cdr lst)))
-    )
-    (t ; otherwise, no match, simply continue
-      (element-count item (cdr lst))
-    )
+    ; if match, increment
+    ((equal item (car lst)) (+ 1 (element-count item (cdr lst))))
+    ; otherwise, no match, simply continue
+    (t (element-count item (cdr lst)))
   )
 )
 
 (defun min-mean-max (lst)
   (cond
     ((null lst) nil)
-    (t
-      (list (find-min lst (car lst))  (find-mean lst 0 0) (find-max lst (car lst)))
-    )
+    (t (list (find-min lst (car lst))  (find-mean lst 0 0) (find-max lst (car lst))))
   )
 )
 
@@ -47,19 +43,16 @@
 ; helper function to find mean
 (defun find-mean (lst num total)
   (cond
-    ((null lst) (/ num total))
-    (t
-      (find-mean (cdr lst) (+ num (car lst)) (1+ total))
-    )
+    ((null lst) (/ num total)) ;at the end, divide to get the mean
+    (t (find-mean (cdr lst) (+ num (car lst)) (1+ total)))
   )
 )
 
 (defun shift (num lst)
   (cond
     ((null lst) nil)
-    ((> num 0)
-      (shift (- num 1) (append (cdr lst) (list (car lst))))
-    )
+    ; treat num as a counter
+    ((> num 0) (shift (- num 1) (append (cdr lst) (list (car lst)))))
     (t lst)
   )
 )
@@ -75,9 +68,7 @@
     ((< (car lst) num)
       (less-than num (cdr lst) (append result (list (car lst))))
     )
-    (t
-      (less-than num (cdr lst) result)
-    )
+    (t (less-than num (cdr lst) result))
   )
 )
 
@@ -85,9 +76,7 @@
 (defun greater-than (num lst result)
   (cond
     ((null lst) result)
-    ((>= (car lst) num)
-      (greater-than num (cdr lst) (append result (list (car lst))))
-    )
+    ((>= (car lst) num) (greater-than num (cdr lst) (append result (list (car lst)))))
     (t (greater-than num (cdr lst) result))
   )
 )
@@ -117,7 +106,6 @@
 (defun quicksort (lst)
   (cond
     ((null lst) nil)
-    ((sorted lst) lst)
     (t
       (let* ((piv (car lst)) (progress (pivot piv lst)))
         (cond
@@ -130,16 +118,6 @@
     )
   )
 )
-
-;small helper func for quicksort to check if list is sorted (ascending)
-(defun sorted (lst)
-    (cond
-        ((= (list-length lst) 1) t)
-        ((< (car lst) (car (cdr lst))) (sorted (cdr lst)))
-        ((null lst) nil)
-    )
-)
-
 
 ; PART 2
 (defun match (pattern assertion)
