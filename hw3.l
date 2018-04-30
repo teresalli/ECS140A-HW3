@@ -143,9 +143,9 @@
     ((or (null m1) (null m2)) nil)
     (t
       (setq matrix (list))
-      (dotimes (i (list-length m1))
+      (dotimes (i (len m1))
         (setq row (list))
-        (dotimes (j (list-length (car m1)))
+        (dotimes (j (len (car m1)))
           (setq row (append row (list (+ (index m1 i j) (index m2 i j) ))))
         )
         (setq matrix (cons row matrix))
@@ -156,7 +156,23 @@
 )
 
 (defun index (matrix x y)
-  (nth y (nth x matrix))
+  (getitem (getitem matrix x) y)
+)
+
+(defun getitem (row i)
+  (cond
+    ((null row) nil)
+    ((> i 0) (getitem (cdr row) (- i 1)))
+    (t (car row))
+  )
+)
+
+(defun len (lst)
+  (cond
+    ((null lst) 0) ; if no item, return 0
+    ; increment
+    (t (1+ (len (cdr lst))))
+  )
 )
 
 (defun matrix-multiply (m1 m2)
