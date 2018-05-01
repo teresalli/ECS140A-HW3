@@ -141,17 +141,14 @@
 (defun matrix-add (m1 m2)
   (cond
     ((or (null m1) (null m2)) nil)
-    (t
-      (setq matrix (list))
-      (dotimes (i (len m1))
-        (setq row (list))
-        (dotimes (j (len (car m1)))
-          (setq row (append row (list (+ (index m1 i j) (index m2 i j) ))))
-        )
-        (setq matrix (cons row matrix))
-      )
-      (nreverse matrix)
-    )
+    (t (cons (addrow (car m1) (car m2)) (matrix-add (cdr m1) (cdr m2))))
+  )
+)
+
+(defun addrow (r1 r2)
+  (cond
+    ((or (null r1) (null r2)) nil)
+    (t (cons (+ (car r1) (car r2)) (addrow (cdr r1) (cdr r2))))
   )
 )
 
@@ -178,37 +175,49 @@
 (defun matrix-multiply (m1 m2)
   (cond
     ((or (null m1) (null m2)) nil)
-    (t
-      (setq matrix (list))
-      (dotimes (i (list-length m1))
-        (setq row (list))
-        (dotimes (j (list-length (car m2)))
-          (setq result 0)
-          (dotimes (k (list-length m2))
-            (setq result (+ result (* (index m1 i k) (index m2 k j) )))
-          )
-          (setq row (append row (list result)))
-        )
-        (setq matrix (cons row matrix))
-      )
-      (nreverse matrix)
-    )
+    (t (matrix-multiply-helper m1 (matrix-transpose m2)))
+  )
+)
+
+(defun matrix-multiply-helper (m1 m2)
+  (cond
+    ((null m1) nil)
+    (t (cons (multiply-row (car m1) m2) (matrix-multiply-helper (cdr m1) m2)))
+  )
+)
+
+(defun multiply-row (r1 m2)
+  (cond
+    ((null m2) nil)
+    (t (cons (dot-product r1 (car m2)) (multiply-row r1 (cdr m2))))
+  )
+)
+
+(defun dot-product (r1 r2)
+  (cond
+    ((or (null r1) (null r2)) 0)
+    (t (+ (* (car r1) (car r2)) (dot-product (cdr r1) (cdr r2))))
   )
 )
 
 (defun matrix-transpose (m)
   (cond
-    ((or (null m)) nil)
-    (t
-      (setq matrix (list))
-      (dotimes (i (list-length (car m)))
-        (setq row (list))
-        (dotimes (j (list-length m))
-          (setq row (append row (list (index m j i) )))
-        )
-        (setq matrix (cons row matrix))
-      )
-      (nreverse matrix)
-    )
+    ((null m) nil)
+    ((null (car m)) nil)
+    (t (cons (matrix-cars m) (matrix-transpose (matrix-cdrs m))))
+  )
+)
+
+(defun matrix-cars (m)
+  (cond
+    ((null m) nil)
+    (t (cons (caar m) (matrix-cars (cdr m))))
+  )
+)
+
+(defun matrix-cdrs (m)
+  (cond
+    ((null m) nil)
+    (t (cons (cdar m) (matrix-cdrs (cdr m))))
   )
 )
