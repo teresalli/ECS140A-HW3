@@ -58,48 +58,46 @@
 )
 
 (defun pivot (num lst)
-  (list (less-than num lst nil) (greater-than num lst nil))
+  (list (less-than num lst) (greater-than num lst))
 )
 
 ; helper function to get a list less than pivot
-(defun less-than (num lst result)
+(defun less-than (num lst)
   (cond
-    ((null lst) result)
-    ((< (car lst) num)
-      (less-than num (cdr lst) (append result (list (car lst))))
-    )
-    (t (less-than num (cdr lst) result))
+    ((null lst) nil)
+    ((< (car lst) num) (append (list (car lst)) (less-than num (cdr lst)) ))
+    (t (less-than num (cdr lst)))
   )
 )
 
 ; helper function to get a list greater or equal to pivot
-(defun greater-than (num lst result)
+(defun greater-than (num lst)
   (cond
-    ((null lst) result)
-    ((>= (car lst) num) (greater-than num (cdr lst) (append result (list (car lst)))))
-    (t (greater-than num (cdr lst) result))
+    ((null lst) nil)
+    ((>= (car lst) num) (append (list (car lst)) (greater-than num (cdr lst)) ))
+    (t (greater-than num (cdr lst)))
   )
 )
 
 (defun break-list (delim lst)
   (cond
     ((null lst) nil)
-    (t (nreverse (break-list-helper delim lst (list) (list))))
+    (t (break-list-helper delim lst (list)))
   )
 )
 
 ; helper function to recursively construct all the result
-(defun break-list-helper (delim lst temp result)
+(defun break-list-helper (delim lst temp)
   (cond
-    ((null lst) result)
+    ((null lst) nil)
     ((equal delim (car lst))
       (if (not (null temp))
-        (break-list-helper delim (cdr lst) (list) (cons temp result))
-        (break-list-helper delim (cdr lst) (list) result)
+        (cons temp (break-list-helper delim (cdr lst) (list)))
+        (break-list-helper delim (cdr lst) (list))
       )
     )
-    ((null (cdr lst)) (break-list-helper delim (cdr lst) (list) (cons (append temp (list (car lst))) result)))
-    (t (break-list-helper delim (cdr lst) (append temp (list (car lst))) result))
+    ((null (cdr lst)) (cons (append temp (list (car lst))) (break-list-helper delim (cdr lst) (list))))
+    (t (break-list-helper delim (cdr lst) (append temp (list (car lst)))))
   )
 )
 
@@ -149,26 +147,6 @@
   (cond
     ((or (null r1) (null r2)) nil)
     (t (cons (+ (car r1) (car r2)) (addrow (cdr r1) (cdr r2))))
-  )
-)
-
-(defun index (matrix x y)
-  (getitem (getitem matrix x) y)
-)
-
-(defun getitem (row i)
-  (cond
-    ((null row) nil)
-    ((> i 0) (getitem (cdr row) (- i 1)))
-    (t (car row))
-  )
-)
-
-(defun len (lst)
-  (cond
-    ((null lst) 0) ; if no item, return 0
-    ; increment
-    (t (1+ (len (cdr lst))))
   )
 )
 
