@@ -182,20 +182,15 @@
   (cond
     ((null m) nil)
     ((null (car m)) nil)
-    (t (cons (matrix-cars m) (matrix-transpose (matrix-cdrs m))))
+    (t (cons (car (matrix-helper m '() '())) (matrix-transpose (cdr (matrix-helper m '() '())))))
   )
 )
 
-(defun matrix-cars (m)
+(defun matrix-helper (m cars cdrs)
   (cond
-    ((null m) nil)
-    (t (cons (caar m) (matrix-cars (cdr m))))
-  )
-)
-
-(defun matrix-cdrs (m)
-  (cond
-    ((null m) nil)
-    (t (cons (cdar m) (matrix-cdrs (cdr m))))
+    ((null m) (cons cars cdrs))
+    (t
+      (matrix-helper (cdr m) (append cars (list (caar m))) (append cdrs (list (cdar m))))
+    )
   )
 )
